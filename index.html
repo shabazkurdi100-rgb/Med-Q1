@@ -7,21 +7,36 @@
   <meta name="theme-color" content="#0c0d0e">
   <title>Block 2 | Med-Q</title>
 
-  <!-- ===== THEME & ACTIVATION FLASH FIX ===== -->
   <script>
-    if (localStorage.getItem('medq_theme') === 'light') {
-      document.documentElement.classList.add('light-mode-pre');
-    }
-    if (localStorage.getItem('medq_active') === 'true') {
-      document.documentElement.classList.add('already-activated');
-    }
-  </script>
+  if (localStorage.getItem('medq_theme') === 'light') {
+    document.documentElement.classList.add('light-mode-pre');
+  }
+  if (localStorage.getItem('medq_active') === 'true') {
+    document.documentElement.classList.add('already-activated');
+  }
+  (function() {
+    var savedImg  = localStorage.getItem('medq_profile_img');
+    var savedName = localStorage.getItem('medq_profile_name');
+    if (!savedImg && !savedName) return;
+    var style = document.createElement('style');
+    style.id = 'profile-preload-hide';
+    style.textContent = '#app-icon-el img, #app-name-el { opacity: 0; }';
+    document.head.appendChild(style);
+    document.addEventListener('DOMContentLoaded', function() {
+      if (savedImg)  { var el = document.getElementById('profile-img');    if (el) el.src = savedImg; }
+      if (savedName) { var el = document.getElementById('app-name-el');    if (el) el.textContent = savedName; }
+      if (savedImg)  { var el = document.getElementById('pm-preview-img'); if (el) el.src = savedImg; }
+      var s = document.getElementById('profile-preload-hide');
+      if (s) s.remove();
+    });
+  })();
+</script>
 
   <style>
 
     :root {
-      --bg-color: #161616;
-      --card-bg: rgba(26, 28, 30, 0.7);
+      --bg-color: #161616; 
+      --card-bg: rgba(26, 28, 30, 0.7); 
       --header-bg: #1e293b;
       --header-text: #38bdf8;
       --accent-hdsf: #f1f5f9;
@@ -29,7 +44,20 @@
       --text-main: #f1f5f9;
       --text-dim: #94a3b8;
       --border-color: rgba(255, 255, 255, 0.08);
-      --transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+      --transition:
+  background-color 0.2s ease,
+  border-color 0.2s ease,
+  transform 0.2s ease,
+  color 0.2s ease;
+      --dropdown-bg: #1a1c1e;
+      --dropdown-border: rgba(255,255,255,0.12);
+      --dropdown-hover: rgba(255,255,255,0.07);
+      --dropdown-active-bg: #D5D5D5;
+      --dropdown-active-color: #121212;
+      --dropdown-divider: rgba(255,255,255,0.08);
+      --settings-item-icon: #fff;
+      --settings-item-sub: #A2A2A2;
+      --border-theory-practical: rgba(255,255,255,0.03);
     }
 
     body.light-mode,
@@ -41,9 +69,16 @@
       --text-main: #1a1c1e;
       --text-dim: #555e6b;
       --border-color: rgba(0, 0, 0, 0.1);
+      --dropdown-bg: #ffffff;
+      --dropdown-border: rgba(0,0,0,0.12);
+      --dropdown-hover: rgba(0,0,0,0.05);
+      --dropdown-active-bg: #2D2D2D;
+      --dropdown-active-color: #ffffff;
+      --dropdown-divider: rgba(0,0,0,0.08);
+      --settings-item-icon: #2D2D2D;
+      --settings-item-sub:#999;
+      --border-theory-practical: rgba(0,0,0,0.04);
     }
-
-    /* Activation flash fix */
     html.already-activated #activation-overlay { display: none !important; }
     html.already-activated body { overflow: auto; }
 
@@ -64,10 +99,10 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .main-header,
-    .year-selection-container,
-    .year-content,
-    .site-footer,
+    .main-header, 
+    .year-selection-container, 
+    .year-content, 
+    .site-footer, 
     #activation-overlay {
       position: relative;
       z-index: 1;
@@ -76,7 +111,6 @@
     /* ===== ACTIVATION SYSTEM ===== */
     body.locked { overflow: hidden; }
     body.locked .mcq-link { pointer-events: none; opacity: 0.5; }
-
     #activation-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -86,48 +120,115 @@
       align-items: center;
       justify-content: center;
     }
-
     .activation-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       padding: 40px 30px;
-      border-radius: 28px;
+      border-radius: 14px;
       text-align: center;
       width: 90%;
       max-width: 400px;
     }
-
     .activation-card input {
       width: 100%; padding: 16px; background: #000; border: 1px solid var(--border-color);
-      border-radius: 14px; color: #fff; text-align: center; margin-bottom: 20px;
+      border-radius: 8px; color: #fff; text-align: center; margin-bottom: 20px;
     }
-
     .activation-card button {
       width: 100%; padding: 16px; background: var(--accent-bbb); color: #000;
-      border: none; border-radius: 14px; font-weight: 700; cursor: pointer;
+      border: none; border-radius: 8px; font-weight: 800; font-size: 0.9rem;
     }
 
-    /* ===== TOP BAR ===== */
+    
     .top-bar {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 4px;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .top-bar-left {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
+      flex-shrink: 1;
     }
 
-    .top-bar-right {
+    /* ===== PROFILE AREA ===== */
+    .profile-area {
       display: flex;
       align-items: center;
       gap: 10px;
+      border-radius: 10px;
+      padding: 3px 6px 3px 0px;
+      transition: background 0.2s ease;
+      user-select: none;
+      min-width: 0;
+      flex-shrink: 1;
     }
+
+    .profile-area:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    body.light-mode .profile-area:hover,
+    html.light-mode-pre body .profile-area:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .app-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--accent-bbb);
+      letter-spacing: -0.03em;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color 0.2s ease;
+    }
+
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .app-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.02em;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+   @media (max-width: 480px) {
+  .app-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    font-size: 1rem;
+  }
+  .profile-area {
+    align-items: center;
+  }
+  .top-bar-right {
+    flex-shrink: 0;
+  }
+}
 
     .top-bar-icon-btn {
       width: 46px;
@@ -140,6 +241,7 @@
       justify-content: center;
       transition: var(--transition);
       text-decoration: none;
+      position: relative;
     }
 
     .top-bar-icon-btn:hover {
@@ -158,14 +260,9 @@
       transition: stroke 0.2s ease;
     }
 
-    .top-bar-icon-btn svg.chat-icon {
-      stroke: none;
-      fill: var(--text-dim);
-      transition: fill 0.2s ease;
+    .top-bar-icon-btn:hover svg {
+      stroke: var(--text-main);
     }
-
-    .top-bar-icon-btn:hover svg.chat-icon { fill: var(--text-main); }
-    .top-bar-icon-btn:hover svg { stroke: var(--text-main); }
 
     body.light-mode .top-bar-icon-btn,
     html.light-mode-pre body .top-bar-icon-btn {
@@ -174,13 +271,14 @@
     }
 
     body.light-mode .top-bar-icon-btn svg,
-    html.light-mode-pre body .top-bar-icon-btn svg { stroke: var(--text-dim); }
+    html.light-mode-pre body .top-bar-icon-btn svg {
+      stroke: var(--text-dim);
+    }
 
     body.light-mode .top-bar-icon-btn:hover svg,
-    html.light-mode-pre body .top-bar-icon-btn:hover svg { stroke: var(--text-main); }
-
-    body.light-mode .top-bar-icon-btn:hover svg.chat-icon,
-    html.light-mode-pre body .top-bar-icon-btn:hover svg.chat-icon { fill: var(--text-main); }
+    html.light-mode-pre body .top-bar-icon-btn:hover svg {
+      stroke: var(--text-main);
+    }
 
     body.light-mode .top-bar-icon-btn:hover,
     html.light-mode-pre body .top-bar-icon-btn:hover {
@@ -188,100 +286,125 @@
       border-color: #121212;
     }
 
-    .app-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: 0.02em;
+    #calendar-btn.dropdown-open {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(40, 42, 45, 0.9);
+    }
+    #calendar-btn.dropdown-open svg {
+      stroke: var(--text-main);
     }
 
-    .app-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      font-weight: 900;
-      color: var(--accent-bbb);
-      font-family: 'Segoe UI', sans-serif;
+    body.light-mode #calendar-btn.dropdown-open,
+    html.light-mode-pre body #calendar-btn.dropdown-open {
+      border-color: #121212;
+      background: rgba(255,255,255,1);
+    }
+    body.light-mode #calendar-btn.dropdown-open svg,
+    html.light-mode-pre body #calendar-btn.dropdown-open svg {
+      stroke: var(--text-main);
     }
 
-    /* ===== HEADER ===== */
-    .main-header {
-      width: 100%;
-      background: var(--header-bg);
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid var(--header-bg);
-      margin-bottom: 18px;
-      transition: background 0.3s ease, border-color 0.3s ease;
+    .year-dropdown-wrapper {
+      position: relative;
+      display: inline-block;
     }
 
-    .header-info h3 { margin: 0; font-size: 1.45rem; color: var(--header-text); font-weight: 800; }
-    .header-info p { margin: 6px 0 0; color: var(--header-text); font-size: 0.9rem; }
-
-    body.light-mode .main-header,
-    html.light-mode-pre body .main-header {
-      background: #2D2D2D;
-      border-color: #2D2D2D;
+    .year-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--dropdown-bg);
+      border: 1px solid var(--dropdown-border);
+      border-radius: 7px;
+      overflow: hidden;
+      min-width: 140px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
     }
 
-    /* ===== YEAR CHIPS ===== */
-    .year-selection-container {
-      width: 100%;
-      margin-bottom: 15px;
+    body.light-mode .year-dropdown,
+    html.light-mode-pre body .year-dropdown {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
 
-    .year-nav {
+    .year-dropdown.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .year-dropdown-item {
+      padding: 13px 18px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text-dim);
+      transition: background 0.15s ease, color 0.15s ease;
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      user-select: none;
     }
 
-    .year-chip {
-      padding: 10px 16px;
-      border-radius: 6px;
-      color: #E8E8E8;
-      border: 1px solid var(--border-color);
-      background: transparent;
-      font-size: 0.92rem;
-      font-weight: 680;
-      white-space: nowrap;
-      cursor: default;
+    .year-dropdown-item:not(:last-child) {
+      border-bottom: 1px solid var(--dropdown-divider);
     }
 
-    .year-chip.active {
-      background: #E8E8E8;
-      border-color: #E8E8E8;
-      color: #121212;
+    .year-dropdown-item:hover {
+      background: var(--dropdown-hover);
+      color: var(--text-main);
     }
 
-    body.light-mode .year-chip,
-    html.light-mode-pre body .year-chip {
-      color: #121212;
-      border-color: rgba(0,0,0,0.1);
-      background: transparent;
+    .year-dropdown-item.active {
+      background: var(--dropdown-active-bg);
+      color: var(--dropdown-active-color);
     }
 
-    body.light-mode .year-chip.active,
-    html.light-mode-pre body .year-chip.active {
-      background: #4D4D4D;
-      border-color: #4D4D4D;
-      color: #ffffff;
+    .year-dropdown-item.active:hover {
+      background: var(--dropdown-active-bg);
+      color: var(--dropdown-active-color);
     }
 
-    /* ===== SECTIONS ===== */
+    .year-dropdown-item.active .year-dot {
+      opacity: 1;
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .main-header {
+      width: 100%; background: var(--header-bg); 
+      padding: 12px; border-radius: 10px; border: 1px solid var(--header-bg); margin-bottom: 12px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .header-info h3 { margin: 0; font-size: 1.45rem; color: var(--header-text); font-weight: 800; }
+    .header-info p { margin: 6px 0 0; color: var(--header-text); font-size: 0.9rem; }
+
     .year-content { display: none; width: 100%; }
     .year-content.active { display: block; }
+
+    /* ===== FILTER VIEW ===== */
+    #filter-view {
+      display: none;
+      width: 100%;
+    }
+    #filter-view.active {
+      display: block;
+    }
+
+    .section-container { width: 100%; margin-bottom: 60px; }
 
     .sections-wrapper {
       display: flex;
       flex-direction: column;
       gap: 0;
+      transition: none;
     }
 
     .sections-wrapper.swapping .section-container {
@@ -295,32 +418,36 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    .section-container { width: 100%; margin-bottom: 60px; }
-
+    /* ===== CARD UNSAVE ANIMATION ===== */
+    @keyframes cardFadeOut {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.94); }
+    }
+    .card-removing {
+      animation: cardFadeOut 0.28s ease forwards;
+      pointer-events: none;
+    }
+    
     .category-title {
-      font-size: 1.2rem;
+      font-size: 1rem;
+      font-weight: 700;
       margin: 12px 0 20px 0;
-      padding: 5px 18px;
-      border-radius: 5px;
+      padding: 7px 14px;
+      border-radius: 6px;
       align-items: center;
-      background: rgba(245, 247, 249, 0.94);
+      background: #D5D5D5;
     }
 
-    .hdsf-theme { border-color: var(--accent-hdsf); color: #121212; }
-    .bbb-theme  { border-color: var(--accent-bbb);  color: #121212; }
-
-    body.light-mode .category-title,
-    html.light-mode-pre body .category-title {
-      background: rgba(26, 28, 30, 0.7);
+    .hdsf-theme {
+      border-color: var(--accent-hdsf);
+      color: #121212;
     }
 
-    body.light-mode .hdsf-theme,
-    html.light-mode-pre body .hdsf-theme { color: var(--accent-bbb); }
+    .bbb-theme {
+      border-color: var(--accent-bbb);
+      color: #121212;
+    }
 
-    body.light-mode .bbb-theme,
-    html.light-mode-pre body .bbb-theme  { color: var(--accent-bbb); }
-
-    /* ===== CARDS ===== */
     .subject-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -333,15 +460,63 @@
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 14px;
-      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      transition: background-color 0.2s ease,
+                  border-color 0.2s ease,
+                  transform 0.2s ease;
       transform: translateZ(0);
       will-change: transform;
+      position: relative;
     }
 
     .subject-card:hover {
       border-color: rgba(255,255,255,0.2);
       background: rgba(40, 42, 45, 0.8);
       transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-header h1 { font-size: 1.1rem; margin: 0 0 15px 0; color: var(--text-main); flex: 1; }
+
+    .links-container { display: flex; flex-direction: column; gap: 4px; }
+
+    .mcq-link {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-theory-practical);
+      text-decoration: none;
+    }
+    .mcq-link:last-child { border-bottom: none; }
+    .mcq-link:hover { color: var(--accent-bbb); font-weight:500; }
+
+    .badge {
+      font-size: 0.75rem; padding: 3px 10px; border-radius: 4px;
+      background: rgba(38, 41, 43, 0.8); color: var(--accent-hdsf); font-weight: 500;
+    }
+
+    .site-footer {
+      margin-top: auto; padding: 20px; text-align: center;
+      font-size: 0.75rem; opacity: 0.6; 
+    }
+
+    body.light-mode,
+    html.light-mode-pre body {
+      background-color: #eef2f7;
+    }
+
+    body.light-mode .main-header,
+    html.light-mode-pre body .main-header {
+      background: #2D2D2D;
+      border-color: #2D2D2D;
     }
 
     body.light-mode .subject-card,
@@ -357,45 +532,729 @@
       border-color: #121212;
     }
 
-    .card-header h1 { font-size: 1.1rem; margin: 0 0 15px 0; color: var(--text-main); }
-
-    .links-container { display: flex; flex-direction: column; gap: 4px; }
-
-    .mcq-link {
-      color: var(--text-dim);
-      font-size: 0.95rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      text-decoration: none;
-      cursor: default;
+    body.light-mode .category-title,
+    html.light-mode-pre body .category-title {
+      background: rgba(26, 28, 30, 0.7);
     }
 
-    .mcq-link:last-child { border-bottom: none; }
-    .mcq-link:hover { color: var(--accent-bbb); }
-    body.light-mode .mcq-link:hover { color: black; }
+    body.light-mode .hdsf-theme,
+    html.light-mode-pre body .hdsf-theme {
+      border-color: var(--accent-hdsf);
+      color: var(--accent-bbb);
+    }
 
-    .badge {
-      font-size: 0.75rem; padding: 3px 10px; border-radius: 4px;
-      background: rgba(38, 41, 43, 0.8); color: var(--accent-hdsf); font-weight: 500;
+    body.light-mode .bbb-theme,
+    html.light-mode-pre body .bbb-theme {
+      border-color: var(--accent-bbb);
+      color: var(--accent-bbb);
     }
 
     body.light-mode .badge,
     html.light-mode-pre body .badge {
-      background: rgba(245, 247, 249, 0.94);
+      background: rgba(242, 244, 246, 0.95);
       color: #121212;
     }
 
-    /* ===== FOOTER ===== */
-    .site-footer {
-      width: 300px; margin-top: auto; padding: 20px; text-align: center;
-      font-size: 0.75rem; opacity: 0.6; border-top: 1px solid var(--border-color);
+    body.light-mode .mcq-link:hover,
+    html.light-mode-pre body .mcq-link:hover { color: black; }
+
+
+    /* ===== PROFILE EDIT MODAL ===== */
+    #profile-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 70px 0 0 15px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
     }
 
-    body.light-mode,
-    html.light-mode-pre body { background-color: #eef2f7; }
+    #profile-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #profile-modal {
+      background: #111111;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      padding: 22px 20px 18px;
+      width: 260px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+      transform: translateY(-8px) scale(0.97);
+      transition: transform 0.22s ease, opacity 0.22s ease;
+      opacity: 0;
+    }
+
+    #profile-modal-backdrop.open #profile-modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .pm-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #666;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 16px 0;
+    }
+
+    .pm-image-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .pm-avatar-preview {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #222;
+    }
+
+    .pm-avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .pm-pick-btn {
+      flex: 1;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #ccc;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .pm-pick-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.22);
+      color: #fff;
+    }
+
+    .pm-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 7px;
+      display: block;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .pm-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-size: 0.9rem;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      outline: none;
+      transition: border-color 0.15s ease, background 0.15s ease;
+      margin-bottom: 18px;
+    }
+
+    .pm-input:focus {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .pm-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pm-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .pm-btn:active {
+      transform: scale(0.97);
+    }
+
+    .pm-btn-cancel {
+      background: rgba(255,255,255,0.07);
+      color: #888;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .pm-btn-cancel:hover {
+      background: rgba(255,255,255,0.11);
+      color: #bbb;
+    }
+
+    .pm-btn-save {
+      background: #f1f5f9;
+      color: #111;
+    }
+
+    .pm-btn-save:hover {
+      background: #ffffff;
+    }
+
+    #profile-file-input {
+      display: none;
+    }
+
+    /* ===== SETTINGS DROPDOWN ===== */
+    .settings-dropdown-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    #settings-btn.dropdown-open {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(40, 42, 45, 0.9);
+    }
+    #settings-btn.dropdown-open svg {
+      stroke: var(--text-main);
+    }
+
+    body.light-mode #settings-btn.dropdown-open,
+    html.light-mode-pre body #settings-btn.dropdown-open {
+      border-color: #121212;
+      background: rgba(255,255,255,1);
+    }
+    body.light-mode #settings-btn.dropdown-open svg,
+    html.light-mode-pre body #settings-btn.dropdown-open svg {
+      stroke: var(--text-main);
+    }
+
+    .settings-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #111111;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 200px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px) scale(0.97);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+    }
+
+    .settings-dropdown.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    body.light-mode .settings-dropdown,
+    html.light-mode-pre body .settings-dropdown {
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.13);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+
+    .settings-dropdown-header {
+      padding: 14px 16px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    body.light-mode .settings-dropdown-header,
+    html.light-mode-pre body .settings-dropdown-header {
+      border-bottom-color: rgba(0,0,0,0.08);
+      color: #999;
+    }
+
+    .settings-close-btn {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.15s ease;
+    }
+
+    .settings-close-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    body.light-mode .settings-close-btn:hover,
+    html.light-mode-pre body .settings-close-btn:hover {
+      background: rgba(0,0,0,0.08);
+    }
+
+    .settings-close-btn svg {
+      width: 10px;
+      height: 10px;
+      stroke: #666;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      flex-shrink: 0;
+    }
+
+    .settings-close-btn:hover svg {
+      stroke: #aaa;
+    }
+
+    body.light-mode .settings-close-btn:hover svg,
+    html.light-mode-pre body .settings-close-btn:hover svg {
+      stroke: #444;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 14px 16px;
+      transition: background 0.15s ease;
+      text-decoration: none;
+    }
+
+    .settings-item:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    body.light-mode .settings-item:not(:last-child),
+    html.light-mode-pre body .settings-item:not(:last-child) {
+      border-bottom-color: rgba(0,0,0,0.06);
+    }
+
+    .settings-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    body.light-mode .settings-item:hover,
+    html.light-mode-pre body .settings-item:hover {
+      background: rgba(0,0,0,0.04);
+    }
+
+    .settings-item-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    body.light-mode .settings-item-icon,
+    html.light-mode-pre body .settings-item-icon {
+      background: #fff;
+      border-color: rgba(0,0,0,0.1);
+    }
+
+    .settings-item:hover .settings-item-icon {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    body.light-mode .settings-item:hover .settings-item-icon,
+    html.light-mode-pre body .settings-item:hover .settings-item-icon {
+      background: rgba(0,0,0,0.03);
+      border-color: rgba(0,0,0,0.18);
+    }
+
+    .settings-item-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--settings-item-icon);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.15s ease;
+    }
+
+    .settings-item:hover .settings-item-icon svg {
+      stroke: var(--settings-item-icon);
+    }
+
+    body.light-mode .settings-item:hover .settings-item-icon svg,
+    html.light-mode-pre body .settings-item:hover .settings-item-icon svg {
+      stroke: #111;
+    }
+
+    .settings-item-icon svg.contact-icon {
+      stroke: var(--settings-item-icon);
+      fill: #aaa;
+      transition: fill 0.15s ease;
+    }
+
+    .settings-item:hover .settings-item-icon svg.contact-icon {
+      fill: #fff;
+    }
+
+    body.light-mode .settings-item:hover .settings-item-icon svg.contact-icon,
+    html.light-mode-pre body .settings-item:hover .settings-item-icon svg.contact-icon {
+      fill: #111;
+    }
+
+    .settings-item-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .settings-item-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      transition: color 0.15s ease;
+    }
+
+    body.light-mode .settings-item-label,
+    html.light-mode-pre body .settings-item-label {
+      color: #1a1c1e;
+    }
+
+    .settings-item-sub {
+      font-size: 0.73rem;
+      color: var(--settings-item-sub);
+      font-weight: 500;
+    }
+
+    body.light-mode .settings-item-sub,
+    html.light-mode-pre body .settings-item-sub {
+      color: #999;
+    }
+
+    /* ===== FILTER DROPDOWN ===== */
+    .filter-dropdown-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    #filter-btn.dropdown-open {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(40, 42, 45, 0.9);
+    }
+    #filter-btn.dropdown-open svg {
+      fill: var(--text-main);
+    }
+
+    body.light-mode #filter-btn.dropdown-open,
+    html.light-mode-pre body #filter-btn.dropdown-open {
+      border-color: #121212;
+      background: rgba(255,255,255,1);
+    }
+    body.light-mode #filter-btn.dropdown-open svg,
+    html.light-mode-pre body #filter-btn.dropdown-open svg {
+      fill: var(--text-main);
+    }
+
+  
+    #filter-btn svg {
+  stroke: none !important;
+  fill: var(--text-dim);
+  transition: fill 0.2s ease;
+}
+#filter-btn:hover svg {
+  fill: var(--text-main);
+}
+#filter-btn.dropdown-open svg {
+  fill: var(--text-main);
+}
+body.light-mode #filter-btn svg,
+html.light-mode-pre body #filter-btn svg {
+  fill: var(--text-dim);
+}
+body.light-mode #filter-btn:hover svg,
+html.light-mode-pre body #filter-btn:hover svg {
+  fill: var(--text-main);
+}
+
+    .filter-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #111111;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 180px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px) scale(0.97);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+    }
+
+    .filter-dropdown.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    body.light-mode .filter-dropdown,
+    html.light-mode-pre body .filter-dropdown {
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.13);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+
+    .filter-dropdown-header {
+      padding: 14px 16px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    body.light-mode .filter-dropdown-header,
+    html.light-mode-pre body .filter-dropdown-header {
+      border-bottom-color: rgba(0,0,0,0.08);
+      color: #999;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 13px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #aaa;
+      transition: background 0.15s ease, color 0.15s ease;
+      user-select: none;
+    }
+
+    body.light-mode .filter-option,
+    html.light-mode-pre body .filter-option {
+      color: #666;
+    }
+
+    .filter-option:not(:last-child) {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    body.light-mode .filter-option:not(:last-child),
+    html.light-mode-pre body .filter-option:not(:last-child) {
+      border-bottom-color: rgba(0,0,0,0.06);
+    }
+
+    .filter-option:hover {
+      background: rgba(255,255,255,0.06);
+      color: #e2e8f0;
+    }
+
+    body.light-mode .filter-option:hover,
+    html.light-mode-pre body .filter-option:hover {
+      background: rgba(0,0,0,0.04);
+      color: #111;
+    }
+
+    .filter-option.active {
+      color: #f1f5f9;
+    }
+
+    body.light-mode .filter-option.active,
+    html.light-mode-pre body .filter-option.active {
+      color: #111;
+    }
+
+    .filter-option-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      flex-shrink: 0;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+
+    body.light-mode .filter-option-dot,
+    html.light-mode-pre body .filter-option-dot {
+      border-color: rgba(0,0,0,0.2);
+    }
+
+    .filter-option.active .filter-option-dot {
+      background: #f1f5f9;
+      border-color: #f1f5f9;
+    }
+
+    body.light-mode .filter-option.active .filter-option-dot,
+    html.light-mode-pre body .filter-option.active .filter-option-dot {
+      background: #111;
+      border-color: #111;
+    }
+
+    /* ===== CARD THREE-DOT MENU ===== */
+    .card-menu-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      margin-top: -2px;
+    }
+
+    .card-three-dot-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .card-three-dot-btn:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    body.light-mode .card-three-dot-btn:hover,
+    html.light-mode-pre body .card-three-dot-btn:hover {
+      background: rgba(0,0,0,0.06);
+    }
+
+    .card-three-dot-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-dim);
+      stroke: none;
+      transition: fill 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .card-three-dot-btn:hover svg {
+      fill: var(--text-main);
+    }
+
+    .card-three-dot-btn.saved svg {
+      fill: #f5c518;
+    }
+
+    .card-context-menu {
+      position: absolute;
+      top: calc(100% + 5px);
+      right: 0;
+      background: #111111;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 10px;
+      overflow: hidden;
+      min-width: 148px;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px) scale(0.97);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+    }
+
+    .card-context-menu.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    body.light-mode .card-context-menu,
+    html.light-mode-pre body .card-context-menu {
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.13);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+    }
+
+    .card-context-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ccc;
+      transition: background 0.13s ease, color 0.13s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .card-context-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+    }
+
+    body.light-mode .card-context-item,
+    html.light-mode-pre body .card-context-item {
+      color: #444;
+    }
+
+    body.light-mode .card-context-item:hover,
+    html.light-mode-pre body .card-context-item:hover {
+      background: rgba(0,0,0,0.05);
+      color: #111;
+    }
+
+    .card-context-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      transition: fill 0.15s ease, stroke 0.15s ease;
+    }
+
+    .save-icon-outline {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    body.light-mode .save-icon-outline,
+    html.light-mode-pre body .save-icon-outline {
+      stroke: #444;
+    }
+
+    .card-context-item:hover .save-icon-outline {
+      stroke: #fff;
+    }
+
+    body.light-mode .card-context-item:hover .save-icon-outline,
+    html.light-mode-pre body .card-context-item:hover .save-icon-outline {
+      stroke: #111;
+    }
+
+    .save-icon-filled {
+      fill: #f5c518;
+      stroke: #f5c518;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
   </style>
 </head>
@@ -403,7 +1262,7 @@
 
   <div id="activation-overlay">
     <div class="activation-card">
-      <h2>Unlock Med-Q</h2>
+      <h2>Welcome to Med-Q</h2>
       <p>Please enter your unique activation code to access the questions.</p>
       <input type="text" id="activation-code" placeholder="Enter Code Here">
       <button id="activate-btn">Activate App</button>
@@ -415,52 +1274,170 @@
     </div>
   </div>
 
+  <!-- Hidden file input for profile image -->
+  <input type="file" id="profile-file-input" accept="image/*">
+
+  <!-- Profile Edit Modal -->
+  <div id="profile-modal-backdrop">
+    <div id="profile-modal">
+      <p class="pm-title">Edit Profile</p>
+
+      <div class="pm-image-row">
+        <div class="pm-avatar-preview">
+          <img id="pm-preview-img" src="https://i.imgur.com/AXJmZwo.png" alt="Preview">
+        </div>
+        <div class="pm-pick-btn" onclick="document.getElementById('profile-file-input').click()">
+          Change Photo
+        </div>
+      </div>
+
+      <label class="pm-label" for="pm-name-input">Display Name</label>
+      <input class="pm-input" id="pm-name-input" type="text" placeholder="Your name" maxlength="24">
+
+      <div class="pm-actions">
+        <button class="pm-btn pm-btn-cancel" onclick="closeProfileModal()">Cancel</button>
+        <button class="pm-btn pm-btn-save" onclick="saveProfile()">Save</button>
+      </div>
+    </div>
+  </div>
+
   <div class="top-bar">
     <div class="top-bar-left">
-      <div class="app-icon">
-        <img src="https://i.imgur.com/AXJmZwo.png" alt="Med-Q" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+      <div class="profile-area" onclick="openProfileModal()" title="Edit profile">
+        <div class="app-icon" id="app-icon-el">
+          <img id="profile-img" src="https://i.imgur.com/AXJmZwo.png" alt="Med-Q">
+        </div>
+        <span class="app-name" id="app-name-el">Med-Q</span>
       </div>
-      <span class="app-name">Med-Q</span>
     </div>
 
     <div class="top-bar-right">
 
-      <a href="https://t.me/Shabaz_Rasheed" target="_blank" class="top-bar-icon-btn" title="Contact Support">
-        <svg class="chat-icon" width="23px" height="23px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <path d="M38.0728,40.9023c-0.5522,0-1.0259-0.4478-1.0259-1s0.4219-1,0.9741-1h0.0518c0.5522,0,1,0.4478,1,1 S38.625,40.9023,38.0728,40.9023z"/>
-          <path d="M45.3604,40.9023c-0.5522,0-1.0273-0.4478-1.0273-1s0.4199-1,0.9722-1h0.0552c0.5522,0,1,0.4478,1,1 S45.9126,40.9023,45.3604,40.9023z"/>
-          <path d="M52.6445,40.9023c-0.5522,0-1.0273-0.4478-1.0273-1s0.4199-1,0.9722-1h0.0552c0.5522,0,1,0.4478,1,1 S53.1968,40.9023,52.6445,40.9023z"/>
-          <path d="M12.584,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.418-1,0.9702-1h0.0591c0.5522,0,1,0.4478,1,1 S13.1362,25.186,12.584,25.186z"/>
-          <path d="M20.7529,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.4185-1,0.9707-1h0.0586c0.5522,0,1,0.4478,1,1 S21.3052,25.186,20.7529,25.186z"/>
-          <path d="M28.9219,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.4185-1,0.9707-1h0.0586c0.5522,0,1,0.4478,1,1 S29.4741,25.186,28.9219,25.186z"/>
-          <path d="M56.5327,26.0718h-0.0005c-3.6577-3.0059-8.2656-4.4053-12.9771-3.9463c-1.0573,0.1035-2.0867,0.3111-3.0887,0.5919 c-0.2051-3.1539-1.169-6.2225-2.8205-8.9474c-2.7339-4.5127-7.0605-7.6904-12.1841-8.9478 c-5.1226-1.2573-10.4302-0.4434-14.9414,2.2905c-9.3149,5.6431-12.3022,17.812-6.6592,27.1274 c0.4487,0.7378,0.9443,1.4468,1.4785,2.1147l-2.1206,6.457c-0.1152,0.3521-0.0269,0.7388,0.23,1.0059 c0.1914,0.1982,0.4526,0.3062,0.7202,0.3062c0.0923,0,0.1851-0.0127,0.2764-0.0391l7.8203-2.2476 c4.9188,2.3405,10.487,2.549,15.5263,0.6185c0.6382,4.1645,2.7308,8.1203,6.233,10.9997 c4.626,3.8027,10.7549,5.0024,16.4702,3.2461l6.5781,2.9609c0.1313,0.0591,0.2715,0.0879,0.4106,0.0879 c0.2183,0,0.4351-0.0718,0.6138-0.2104c0.2925-0.2275,0.4351-0.5977,0.3711-0.9624l-1.0391-5.9121 c0.5459-0.5166,1.062-1.0698,1.5391-1.6499C65.1724,43.4663,64.0791,32.2764,56.5327,26.0718z M12.8066,39.8755 c-0.2241-0.1113-0.4814-0.1353-0.7236-0.0664l-6.374,1.832l1.7026-5.1851c0.1084-0.3306,0.0376-0.6938-0.1875-0.959 c-0.604-0.7119-1.1606-1.4844-1.6528-2.2944C0.5,24.8315,3.1851,13.895,11.5571,8.8232c4.0537-2.458,8.8218-3.1885,13.4282-2.0591 c4.6045,1.1304,8.4932,3.9863,10.9502,8.0425c1.5782,2.6036,2.4474,5.5574,2.5516,8.5797 c-2.6577,1.0986-5.0207,2.841-6.8978,5.1259c-2.8444,3.4614-4.1367,7.6871-3.9944,11.8476 C22.8245,42.3625,17.4745,42.2095,12.8066,39.8755z M57.4243,49.7456c-0.5303,0.645-1.1147,1.2524-1.7378,1.8062 c-0.2598,0.2305-0.3809,0.5791-0.3208,0.9209l0.8066,4.5908l-5.2051-2.3433c-0.1304-0.0586-0.2705-0.0879-0.4106-0.0879 c-0.106,0-0.2124,0.0166-0.3145,0.0508c-5.1646,1.7104-10.7529,0.6758-14.9463-2.7725 c-6.6953-5.5044-7.6646-15.4312-2.1616-22.1289c2.666-3.2446,6.436-5.2568,10.6157-5.6655 c4.1816-0.4072,8.2681,0.8345,11.5127,3.5005h-0.0005C61.957,33.1211,62.9268,43.0483,57.4243,49.7456z"/>
-        </svg>
-      </a>
-
-      <!-- Section Swap Button -->
-      <div class="top-bar-icon-btn" id="section-swap-btn" title="Swap HDSF / BBB order" onclick="toggleSectionSwap()">
-        <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 6L7 3M7 3L4 6M7 3V17M14 18L17 21M17 21L20 18M17 21V7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+      <!-- Filter Button -->
+      <div class="filter-dropdown-wrapper">
+        <div class="top-bar-icon-btn" id="filter-btn" title="Filter" onclick="toggleFilterDropdown()">
+          <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.90693 3.9999C9.93791 3.99996 9.96894 4.00001 10 4.00001C10.0311 4.00001 10.0621 3.99996 10.0931 3.9999C10.4618 3.99929 10.8242 3.99869 11.147 4.08519C12.0098 4.31636 12.6836 4.99023 12.9148 5.85296C13.0013 6.1758 13.0007 6.53821 13.0001 6.90693C13.0001 6.93792 13 6.96895 13 7.00001H21C21.5523 7.00001 22 7.44772 22 8.00001C22 8.55229 21.5523 9.00001 21 9.00001H13C13 9.03107 13.0001 9.0621 13.0001 9.09309C13.0007 9.46181 13.0013 9.82422 12.9148 10.1471C12.6836 11.0098 12.0098 11.6837 11.147 11.9148C10.8242 12.0013 10.4618 12.0007 10.0931 12.0001C10.0621 12.0001 10.0311 12 10 12C9.96894 12 9.93791 12.0001 9.90692 12.0001C9.5382 12.0007 9.17579 12.0013 8.85295 11.9148C7.99022 11.6837 7.31635 11.0098 7.08519 10.1471C6.99868 9.82421 6.99928 9.46181 6.9999 9.09308C6.99995 9.0621 7 9.03106 7 9.00001H5C4.44772 9.00001 4 8.55229 4 8.00001C4 7.44772 4.44772 7.00001 5 7.00001H7C7 6.96895 6.99995 6.93792 6.9999 6.90693C6.99928 6.53821 6.99868 6.1758 7.08519 5.85296C7.31635 4.99023 7.99022 4.31636 8.85295 4.08519C9.17579 3.99869 9.5382 3.99929 9.90693 3.9999ZM9.49861 6.00536C9.39195 6.01022 9.36685 6.01805 9.37059 6.01704C9.19804 6.06328 9.06327 6.19805 9.01704 6.3706C9.0162 6.37411 9.00963 6.40483 9.00535 6.49861C9.00024 6.61064 9 6.75845 9 7.00001V9.00001C9 9.24156 9.00024 9.38937 9.00535 9.5014C9.01021 9.60806 9.01804 9.63315 9.01704 9.62942C9.06327 9.80196 9.19804 9.93674 9.37059 9.98297C9.36685 9.98197 9.39195 9.98979 9.49861 9.99466C9.61063 9.99977 9.75844 10 10 10C10.2416 10 10.3894 9.99977 10.5014 9.99466C10.608 9.98979 10.6331 9.98197 10.6294 9.98297C10.802 9.93674 10.9367 9.80196 10.983 9.62942C10.982 9.63315 10.9898 9.60806 10.9946 9.5014C10.9998 9.38937 11 9.24156 11 9.00001V7.00001C11 6.75845 10.9998 6.61064 10.9946 6.49861C10.9898 6.39196 10.982 6.36686 10.983 6.3706M9.49861 6.00536C9.61063 6.00025 9.75844 6.00001 10 6.00001L9.49861 6.00536ZM10 6.00001C10.2416 6.00001 10.3894 6.00025 10.5014 6.00536L10 6.00001ZM10.5014 6.00536C10.5952 6.00963 10.6259 6.0162 10.6294 6.01704L10.5014 6.00536ZM10.6298 6.01713C10.6298 6.01713 10.6296 6.0171 10.6294 6.01704L10.6298 6.01713ZM15.9069 11.9999C15.9379 12 15.9689 12 16 12C16.0311 12 16.0621 12 16.0931 11.9999C16.4618 11.9993 16.8242 11.9987 17.147 12.0852C18.0098 12.3164 18.6836 12.9902 18.9148 13.853C19.0013 14.1758 19.0007 14.5382 19.0001 14.9069C19.0001 14.9379 19 14.9689 19 15H21C21.5523 15 22 15.4477 22 16C22 16.5523 21.5523 17 21 17H19C19 17.0311 19.0001 17.0621 19.0001 17.0931C19.0007 17.4618 19.0013 17.8242 18.9148 18.1471C18.6836 19.0098 18.0098 19.6837 17.147 19.9148C16.8242 20.0013 16.4618 20.0007 16.0931 20.0001C16.0621 20.0001 16.0311 20 16 20C15.9689 20 15.9379 20.0001 15.9069 20.0001C15.5382 20.0007 15.1758 20.0013 14.853 19.9148C13.9902 19.6837 13.3164 19.0098 13.0852 18.1471C12.9987 17.8242 12.9993 17.4618 12.9999 17.0931C12.9999 17.0621 13 17.0311 13 17H5C4.44772 17 4 16.5523 4 16C4 15.4477 4.44772 15 5 15H13C13 14.969 12.9999 14.9379 12.9999 14.9069C12.9993 14.5382 12.9987 14.1758 13.0852 13.853C13.3164 12.9902 13.9902 12.3164 14.853 12.0852C15.1758 11.9987 15.5382 11.9993 15.9069 11.9999ZM15.4986 14.0054C15.392 14.0102 15.3669 14.018 15.3706 14.017C15.198 14.0633 15.0633 14.1981 15.017 14.3706C15.018 14.3669 15.0102 14.392 15.0054 14.4986C15.0002 14.6106 15 14.7585 15 15V17C15 17.2416 15.0002 17.3894 15.0054 17.5014C15.0102 17.6081 15.018 17.6332 15.017 17.6294C15.0633 17.802 15.198 17.9367 15.3706 17.983C15.3669 17.982 15.392 17.9898 15.4986 17.9947C15.6106 17.9998 15.7584 18 16 18C16.2416 18 16.3894 17.9998 16.5014 17.9947C16.608 17.9898 16.6331 17.982 16.6294 17.983C16.802 17.9367 16.9367 17.802 16.983 17.6294C16.982 17.6332 16.9898 17.6081 16.9946 17.5014C16.9998 17.3894 17 17.2416 17 17V15C17 14.7585 16.9998 14.6106 16.9946 14.4986C16.9898 14.392 16.982 14.3669 16.983 14.3706C16.9367 14.1981 16.802 14.0633 16.6294 14.017C16.6331 14.018 16.608 14.0102 16.5014 14.0054C16.3894 14.0002 16.2416 14 16 14C15.7584 14 15.6106 14.0002 15.4986 14.0054Z"/>
+</svg>
+        </div>
+        <div class="filter-dropdown" id="filter-dropdown">
+          <div class="filter-dropdown-header">Filter</div>
+          <div class="filter-option active" id="filter-both" onclick="setFilter('both')">
+            <span class="filter-option-dot"></span>
+            Show both
+          </div>
+          <div class="filter-option" id="filter-hdsf" onclick="setFilter('hdsf')">
+            <span class="filter-option-dot"></span>
+            Only HDSF
+          </div>
+          <div class="filter-option" id="filter-bbb" onclick="setFilter('bbb')">
+            <span class="filter-option-dot"></span>
+            Only BBB
+          </div>
+          <div class="filter-option" id="filter-saved" onclick="setFilter('saved')">
+            <span class="filter-option-dot"></span>
+            Only saved cards
+          </div>
+        </div>
       </div>
 
-      <!-- Theme Toggle -->
-      <div class="top-bar-icon-btn dark-active" id="theme-toggle" title="Toggle theme" onclick="toggleTheme()">
-        <svg id="icon-moon" viewBox="0 0 24 24">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-        <svg id="icon-sun" viewBox="0 0 24 24" style="display:none;">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
+      <!-- Year Dropdown -->
+      <div class="year-dropdown-wrapper">
+        <div class="top-bar-icon-btn" id="calendar-btn" title="Select Year" onclick="toggleYearDropdown()">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div class="year-dropdown" id="year-dropdown">
+          <div class="year-dropdown-item active" id="item-2022" onclick="selectYear('2022', this)">
+            <span class="year-dot"></span>
+            2021 - 2025
+          </div>
+          <div class="year-dropdown-item" id="item-2026" onclick="selectYear('2026', this)">
+            <span class="year-dot"></span>
+            2025 - 2026
+          </div>
+        </div>
       </div>
+
+      <!-- Settings Button -->
+      <div class="settings-dropdown-wrapper">
+        <div class="top-bar-icon-btn" id="settings-btn" title="Settings" onclick="toggleSettingsDropdown()">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
+
+        <div class="settings-dropdown" id="settings-dropdown">
+          <div class="settings-dropdown-header">
+            Settings
+            <div class="settings-close-btn" onclick="closeSettingsDropdown()">
+              <svg viewBox="0 0 12 12">
+                <line x1="1" y1="1" x2="11" y2="11"/>
+                <line x1="11" y1="1" x2="1" y2="11"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="settings-item" onclick="toggleThemeFromSettings()">
+            <div class="settings-item-icon">
+              <svg id="settings-icon-moon" viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+              <svg id="settings-icon-sun" viewBox="0 0 24 24" style="display:none;">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </div>
+            <div class="settings-item-text">
+              <span class="settings-item-label" id="settings-theme-label">Dark Mode</span>
+              <span class="settings-item-sub" id="settings-theme-sub">Switch to light</span>
+            </div>
+          </div>
+
+          <div class="settings-item" onclick="toggleSectionSwap()">
+            <div class="settings-item-icon">
+              <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 6L7 3M7 3L4 6M7 3V17M14 18L17 21M17 21L20 18M17 21V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+            <div class="settings-item-text">
+              <span class="settings-item-label" id="swap-label">Reorder</span>
+              <span class="settings-item-sub" id="swap-sub">Move HDSF / BBB</span>
+            </div>
+          </div>
+
+          <a class="settings-item" href="https://t.me/Shabaz_Rasheed" target="_blank" onclick="closeSettingsDropdown()">
+            <div class="settings-item-icon">
+              <svg class="contact-icon" width="16px" height="16px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                <path d="M38.0728,40.9023c-0.5522,0-1.0259-0.4478-1.0259-1s0.4219-1,0.9741-1h0.0518c0.5522,0,1,0.4478,1,1 S38.625,40.9023,38.0728,40.9023z"/>
+                <path d="M45.3604,40.9023c-0.5522,0-1.0273-0.4478-1.0273-1s0.4199-1,0.9722-1h0.0552c0.5522,0,1,0.4478,1,1 S45.9126,40.9023,45.3604,40.9023z"/>
+                <path d="M52.6445,40.9023c-0.5522,0-1.0273-0.4478-1.0273-1s0.4199-1,0.9722-1h0.0552c0.5522,0,1,0.4478,1,1 S53.1968,40.9023,52.6445,40.9023z"/>
+                <path d="M12.584,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.418-1,0.9702-1h0.0591c0.5522,0,1,0.4478,1,1 S13.1362,25.186,12.584,25.186z"/>
+                <path d="M20.7529,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.4185-1,0.9707-1h0.0586c0.5522,0,1,0.4478,1,1 S21.3052,25.186,20.7529,25.186z"/>
+                <path d="M28.9219,25.186c-0.5522,0-1.0293-0.4478-1.0293-1s0.4185-1,0.9707-1h0.0586c0.5522,0,1,0.4478,1,1 S29.4741,25.186,28.9219,25.186z"/>
+                <path d="M56.5327,26.0718h-0.0005c-3.6577-3.0059-8.2656-4.4053-12.9771-3.9463c-1.0573,0.1035-2.0867,0.3111-3.0887,0.5919 c-0.2051-3.1539-1.169-6.2225-2.8205-8.9474c-2.7339-4.5127-7.0605-7.6904-12.1841-8.9478 c-5.1226-1.2573-10.4302-0.4434-14.9414,2.2905c-9.3149,5.6431-12.3022,17.812-6.6592,27.1274 c0.4487,0.7378,0.9443,1.4468,1.4785,2.1147l-2.1206,6.457c-0.1152,0.3521-0.0269,0.7388,0.23,1.0059 c0.1914,0.1982,0.4526,0.3062,0.7202,0.3062c0.0923,0,0.1851-0.0127,0.2764-0.0391l7.8203-2.2476 c4.9188,2.3405,10.487,2.549,15.5263,0.6185c0.6382,4.1645,2.7308,8.1203,6.233,10.9997 c4.626,3.8027,10.7549,5.0024,16.4702,3.2461l6.5781,2.9609c0.1313,0.0591,0.2715,0.0879,0.4106,0.0879 c0.2183,0,0.4351-0.0718,0.6138-0.2104c0.2925-0.2275,0.4351-0.5977,0.3711-0.9624l-1.0391-5.9121 c0.5459-0.5166,1.062-1.0698,1.5391-1.6499C65.1724,43.4663,64.0791,32.2764,56.5327,26.0718z M12.8066,39.8755 c-0.2241-0.1113-0.4814-0.1353-0.7236-0.0664l-6.374,1.832l1.7026-5.1851c0.1084-0.3306,0.0376-0.6938-0.1875-0.959 c-0.604-0.7119-1.1606-1.4844-1.6528-2.2944C0.5,24.8315,3.1851,13.895,11.5571,8.8232c4.0537-2.458,8.8218-3.1885,13.4282-2.0591 c4.6045,1.1304,8.4932,3.9863,10.9502,8.0425c1.5782,2.6036,2.4474,5.5574,2.5516,8.5797 c-2.6577,1.0986-5.0207,2.841-6.8978,5.1259c-2.8444,3.4614-4.1367,7.6871-3.9944,11.8476 C22.8245,42.3625,17.4745,42.2095,12.8066,39.8755z M57.4243,49.7456c-0.5303,0.645-1.1147,1.2524-1.7378,1.8062 c-0.2598,0.2305-0.3809,0.5791-0.3208,0.9209l0.8066,4.5908l-5.2051-2.3433c-0.1304-0.0586-0.2705-0.0879-0.4106-0.0879 c-0.106,0-0.2124,0.0166-0.3145,0.0508c-5.1646,1.7104-10.7529,0.6758-14.9463-2.7725 c-6.6953-5.5044-7.6646-15.4312-2.1616-22.1289c2.666-3.2446,6.436-5.2568,10.6157-5.6655 c4.1816-0.4072,8.2681,0.8345,11.5127,3.5005h-0.0005C61.957,33.1211,62.9268,43.0483,57.4243,49.7456z"/>
+              </svg>
+            </div>
+            <div class="settings-item-text">
+              <span class="settings-item-label">Contact</span>
+              <span class="settings-item-sub">@Shabaz_Rasheed</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -471,66 +1448,163 @@
     </div>
   </header>
 
-  <div class="year-selection-container">
-    <div class="year-nav">
-      <div class="year-chip active" id="chip-2022" onclick="showYear('2022', this)">2021 - 2025</div>
-      <div class="year-chip" id="chip-2026" onclick="showYear('2026', this)">2025 - 2026</div>
-    </div>
-  </div>
-
-  <!-- ===== 2022 CONTENT ===== -->
+  <!-- Normal year-based views -->
   <div id="content-2022" class="year-content active">
     <div class="sections-wrapper" id="sections-2022">
       <main class="section-container" id="section-hdsf-2022">
         <h2 class="category-title hdsf-theme">HDSF</h2>
         <div class="subject-grid">
-          <div class="subject-card">
-            <div class="card-header"><h1>Anatomy 🦴</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-anatomy">
+            <div class="card-header">
+              <h1>Anatomy 🦴</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-anatomy')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-anatomy">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-anatomy', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Anatomy.html'">Theory <span class="badge">165 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='Anatomylabs.html'">Practical <span class="badge">66 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Microbiology 🦠</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-microbiology">
+            <div class="card-header">
+              <h1>Microbiology 🦠</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-microbiology')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-microbiology">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-microbiology', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Microbiology.html'">Theory <span class="badge">109 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='Microbiology labs.html'">Practical <span class="badge">28 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Molecular biology 🧬</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-molbio">
+            <div class="card-header">
+              <h1>Molecular biology 🧬</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-molbio')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-molbio">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-molbio', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Molecular biology.html'">Theory <span class="badge">71 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='M.biology-practical.html'">Practical <span class="badge">3 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Physiology 🫀</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-physiology">
+            <div class="card-header">
+              <h1>Physiology 🫀</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-physiology')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-physiology">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-physiology', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Physiology.html'">Theory <span class="badge">164 MCQs</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Genetics 🧬</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-genetics">
+            <div class="card-header">
+              <h1>Genetics 🧬</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-genetics')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-genetics">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-genetics', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Genetics.html'">Theory <span class="badge">61 MCQs</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Cell biology 🔬</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-cellbio">
+            <div class="card-header">
+              <h1>Cell biology 🔬</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-cellbio')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-cellbio">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-cellbio', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Cell biology.html'">Theory <span class="badge">68 MCQs</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Histology 🫁</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-histology">
+            <div class="card-header">
+              <h1>Histology 🫁</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-histology')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-histology">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-histology', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Histology.html'">Theory <span class="badge">66 MCQs</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Embryology 👶</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2022-embryology">
+            <div class="card-header">
+              <h1>Embryology 👶</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2022-embryology')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2022-embryology">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2022-embryology', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Embryology.html'">Theory <span class="badge">29 MCQs</span></span>
             </div>
@@ -541,23 +1615,62 @@
       <main class="section-container" id="section-bbb-2022">
         <h2 class="category-title bbb-theme">BBB</h2>
         <div class="subject-grid">
-          <div class="subject-card">
-            <div class="card-header"><h1>Biochemistry 🧪</h1></div>
+          <div class="subject-card" data-card-id="bbb-2022-biochemistry">
+            <div class="card-header">
+              <h1>Biochemistry 🧪</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'bbb-2022-biochemistry')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-bbb-2022-biochemistry">
+                  <div class="card-context-item" onclick="toggleSaveCard('bbb-2022-biochemistry', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Biochemistry2.html'">Theory <span class="badge">434 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='Biochemistrylab.html'">Practical <span class="badge">44 Questions</span></span>
               <span class="mcq-link" onclick="location.href='QuizBiochemstry.html'">Quizzes - Theory <span class="badge">167 MCQs</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Biophysics ⚛️</h1></div>
+          <div class="subject-card" data-card-id="bbb-2022-biophysics">
+            <div class="card-header">
+              <h1>Biophysics ⚛️</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'bbb-2022-biophysics')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-bbb-2022-biophysics">
+                  <div class="card-context-item" onclick="toggleSaveCard('bbb-2022-biophysics', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='Biophysics.html'">Theory <span class="badge">180 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='Biophysicslab.html'">Practical <span class="badge">35 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Basic emergency care ⚕️</h1></div>
+          <div class="subject-card" data-card-id="bbb-2022-bec">
+            <div class="card-header">
+              <h1>Basic emergency care ⚕️</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'bbb-2022-bec')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-bbb-2022-bec">
+                  <div class="card-context-item" onclick="toggleSaveCard('bbb-2022-bec', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='BEC.html'">Theory <span class="badge">89 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='BECpractical.html'">Practical <span class="badge">22 Questions</span></span>
@@ -568,21 +1681,46 @@
     </div>
   </div>
 
-  <!-- ===== 2026 CONTENT ===== -->
   <div id="content-2026" class="year-content">
     <div class="sections-wrapper" id="sections-2026">
       <div class="section-container" id="section-hdsf-2026">
         <h2 class="category-title hdsf-theme">HDSF</h2>
         <div class="subject-grid">
-          <div class="subject-card">
-            <div class="card-header"><h1>End-Rotation 1 🔥</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2026-endrot1">
+            <div class="card-header">
+              <h1>End-Rotation 1 🔥</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2026-endrot1')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2026-endrot1">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2026-endrot1', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='End-Rotation_HDSF_2025-2026.html'">Theory <span class="badge">20 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='End-Rotation_HDSF-Practical_2025-2026.html'">Practical <span class="badge">10 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Final Exam</h1></div>
+          <div class="subject-card" data-card-id="hdsf-2026-endrot2">
+            <div class="card-header">
+              <h1>End-Rotation 2</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'hdsf-2026-endrot2')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-hdsf-2026-endrot2">
+                  <div class="card-context-item" onclick="toggleSaveCard('hdsf-2026-endrot2', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <a class="mcq-link" onclick="location.href='#'">Theory <span class="badge">0 MCQs</span></a>
               <a class="mcq-link" href="#">Practical <span class="badge">0 MCQs</span></a>
@@ -594,15 +1732,41 @@
       <div class="section-container" id="section-bbb-2026">
         <h2 class="category-title bbb-theme">BBB</h2>
         <div class="subject-grid">
-          <div class="subject-card">
-            <div class="card-header"><h1>End-Rotation 1 🔥</h1></div>
+          <div class="subject-card" data-card-id="bbb-2026-endrot1">
+            <div class="card-header">
+              <h1>End-Rotation 1 🔥</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'bbb-2026-endrot1')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-bbb-2026-endrot1">
+                  <div class="card-context-item" onclick="toggleSaveCard('bbb-2026-endrot1', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <span class="mcq-link" onclick="location.href='End-Rotation_BBB_2025-2026.html'">Theory <span class="badge">20 MCQs</span></span>
               <span class="mcq-link" onclick="location.href='End-rotation_Practical_BBB.html'">Practical <span class="badge">10 Questions</span></span>
             </div>
           </div>
-          <div class="subject-card">
-            <div class="card-header"><h1>Final Exam</h1></div>
+          <div class="subject-card" data-card-id="bbb-2026-endrot2">
+            <div class="card-header">
+              <h1>End-Rotation 2</h1>
+              <div class="card-menu-wrapper">
+                <div class="card-three-dot-btn" onclick="toggleCardMenu(event, 'bbb-2026-endrot2')">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </div>
+                <div class="card-context-menu" id="menu-bbb-2026-endrot2">
+                  <div class="card-context-item" onclick="toggleSaveCard('bbb-2026-endrot2', this)">
+                    <svg viewBox="0 0 24 24"><path class="save-icon-outline" d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <span>Save card</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="links-container">
               <a class="mcq-link" href="#">Theory <span class="badge">0 MCQs</span></a>
               <a class="mcq-link" href="#">Practical <span class="badge">0 MCQs</span></a>
@@ -613,26 +1777,102 @@
     </div>
   </div>
 
+  <!-- Filter view: rendered dynamically -->
+  <div id="filter-view"></div>
+
   <footer class="site-footer">© Developed by<strong> Shabaz Rasheed</strong></footer>
 
   <script>
-    // ===== SECTION SWAP =====
+
+    /* ===== PROFILE MODAL ===== */
+    const DEFAULT_IMG = 'https://i.imgur.com/AXJmZwo.png';
+    const DEFAULT_NAME = 'Med-Q';
+    let pendingImageDataUrl = null;
+
+    function openProfileModal() {
+      const backdrop = document.getElementById('profile-modal-backdrop');
+      const nameInput = document.getElementById('pm-name-input');
+      const previewImg = document.getElementById('pm-preview-img');
+
+      const savedName = localStorage.getItem('medq_profile_name') || DEFAULT_NAME;
+      const savedImg  = localStorage.getItem('medq_profile_img')  || DEFAULT_IMG;
+
+      nameInput.value = savedName;
+      previewImg.src  = savedImg;
+      pendingImageDataUrl = null;
+
+      backdrop.classList.add('open');
+      backdrop.addEventListener('click', onBackdropClick);
+    }
+
+    function onBackdropClick(e) {
+      if (e.target === document.getElementById('profile-modal-backdrop')) {
+        closeProfileModal();
+      }
+    }
+
+    function closeProfileModal() {
+      const backdrop = document.getElementById('profile-modal-backdrop');
+      backdrop.classList.remove('open');
+      backdrop.removeEventListener('click', onBackdropClick);
+      pendingImageDataUrl = null;
+    }
+
+    function saveProfile() {
+      const nameInput = document.getElementById('pm-name-input');
+      const newName = nameInput.value.trim() || DEFAULT_NAME;
+
+      localStorage.setItem('medq_profile_name', newName);
+      document.getElementById('app-name-el').textContent = newName;
+
+      if (pendingImageDataUrl) {
+        localStorage.setItem('medq_profile_img', pendingImageDataUrl);
+        document.getElementById('profile-img').src = pendingImageDataUrl;
+      }
+
+      closeProfileModal();
+    }
+
+    document.getElementById('profile-file-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        pendingImageDataUrl = ev.target.result;
+        document.getElementById('pm-preview-img').src = pendingImageDataUrl;
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    function restoreProfile() {
+      const savedName = localStorage.getItem('medq_profile_name');
+      const savedImg  = localStorage.getItem('medq_profile_img');
+      if (savedName) document.getElementById('app-name-el').textContent = savedName;
+      if (savedImg)  document.getElementById('profile-img').src = savedImg;
+    }
+
+
+    /* ===== SECTION SWAP ===== */
     function applySwapState(swapped, animate) {
       const wrappers = document.querySelectorAll('.sections-wrapper');
       wrappers.forEach(wrapper => {
         const sections = wrapper.querySelectorAll('.section-container');
         if (sections.length < 2) return;
+
         if (animate) {
           wrapper.classList.add('swapping');
           setTimeout(() => wrapper.classList.remove('swapping'), 400);
         }
-        const bbb  = wrapper.querySelector('[id^="section-bbb"]');
-        const hdsf = wrapper.querySelector('[id^="section-hdsf"]');
-        if (!bbb || !hdsf) return;
+
         if (swapped) {
-          wrapper.insertBefore(bbb, hdsf);
+          const bbb = wrapper.querySelector('[id^="section-bbb"]');
+          const hdsf = wrapper.querySelector('[id^="section-hdsf"]');
+          if (bbb && hdsf) wrapper.insertBefore(bbb, hdsf);
         } else {
-          wrapper.insertBefore(hdsf, bbb);
+          const bbb = wrapper.querySelector('[id^="section-bbb"]');
+          const hdsf = wrapper.querySelector('[id^="section-hdsf"]');
+          if (bbb && hdsf) wrapper.insertBefore(hdsf, bbb);
         }
       });
     }
@@ -644,58 +1884,563 @@
       applySwapState(newState, true);
     }
 
-    // ===== YEAR CHIPS =====
-    function showYear(yearId, element) {
-      document.querySelectorAll('.year-content').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.year-chip').forEach(c => c.classList.remove('active'));
-      document.getElementById('content-' + yearId).classList.add('active');
-      element.classList.add('active');
-      localStorage.setItem('userSelectedYear', yearId);
-    }
-
-    // ===== THEME =====
-    function toggleTheme() {
-      const body = document.body;
-      const btn  = document.getElementById('theme-toggle');
-      const moon = document.getElementById('icon-moon');
-      const sun  = document.getElementById('icon-sun');
-      if (body.classList.contains('light-mode')) {
-        body.classList.remove('light-mode');
-        moon.style.display = '';
-        sun.style.display = 'none';
-        btn.classList.replace('light-active', 'dark-active');
-        localStorage.setItem('medq_theme', 'dark');
+    /* ===== YEAR DROPDOWN ===== */
+    function toggleYearDropdown() {
+      const dropdown = document.getElementById('year-dropdown');
+      const btn = document.getElementById('calendar-btn');
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        dropdown.classList.remove('open');
+        btn.classList.remove('dropdown-open');
       } else {
-        body.classList.add('light-mode');
-        moon.style.display = 'none';
-        sun.style.display = '';
-        btn.classList.replace('dark-active', 'light-active');
-        localStorage.setItem('medq_theme', 'light');
+        document.getElementById('settings-dropdown').classList.remove('open');
+        document.getElementById('settings-btn').classList.remove('dropdown-open');
+        document.getElementById('filter-dropdown').classList.remove('open');
+        document.getElementById('filter-btn').classList.remove('dropdown-open');
+        dropdown.classList.add('open');
+        btn.classList.add('dropdown-open');
       }
     }
 
-    // ===== ON LOAD =====
+    function selectYear(yearId, element) {
+      // Only switch year if not in filter mode
+      const currentFilter = localStorage.getItem('medq_filter') || 'both';
+      if (currentFilter !== 'both') {
+        // Close dropdown silently; filter view handles display
+        document.getElementById('year-dropdown').classList.remove('open');
+        document.getElementById('calendar-btn').classList.remove('dropdown-open');
+        return;
+      }
+
+      document.querySelectorAll('.year-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('content-' + yearId).classList.add('active');
+
+      document.querySelectorAll('.year-dropdown-item').forEach(i => i.classList.remove('active'));
+      element.classList.add('active');
+
+      document.getElementById('year-dropdown').classList.remove('open');
+      document.getElementById('calendar-btn').classList.remove('dropdown-open');
+
+      localStorage.setItem('userSelectedYear', yearId);
+    }
+
+    /* ===== SETTINGS DROPDOWN ===== */
+    function toggleSettingsDropdown() {
+      const dropdown = document.getElementById('settings-dropdown');
+      const btn = document.getElementById('settings-btn');
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        dropdown.classList.remove('open');
+        btn.classList.remove('dropdown-open');
+      } else {
+        document.getElementById('year-dropdown').classList.remove('open');
+        document.getElementById('calendar-btn').classList.remove('dropdown-open');
+        document.getElementById('filter-dropdown').classList.remove('open');
+        document.getElementById('filter-btn').classList.remove('dropdown-open');
+        dropdown.classList.add('open');
+        btn.classList.add('dropdown-open');
+      }
+    }
+
+    function closeSettingsDropdown() {
+      document.getElementById('settings-dropdown').classList.remove('open');
+      document.getElementById('settings-btn').classList.remove('dropdown-open');
+    }
+
+    function updateSettingsThemeUI(isLight) {
+      const moonIcon = document.getElementById('settings-icon-moon');
+      const sunIcon  = document.getElementById('settings-icon-sun');
+      const label    = document.getElementById('settings-theme-label');
+      const sub      = document.getElementById('settings-theme-sub');
+
+      if (isLight) {
+        moonIcon.style.display = 'none';
+        sunIcon.style.display  = '';
+        label.textContent = 'Light Mode';
+        sub.textContent   = 'Switch to dark';
+      } else {
+        moonIcon.style.display = '';
+        sunIcon.style.display  = 'none';
+        label.textContent = 'Dark Mode';
+        sub.textContent   = 'Switch to light';
+      }
+    }
+
+    function toggleThemeFromSettings() {
+      const body = document.body;
+      const isCurrentlyLight = body.classList.contains('light-mode');
+
+      if (isCurrentlyLight) {
+        body.classList.remove('light-mode');
+        localStorage.setItem('medq_theme', 'dark');
+        updateSettingsThemeUI(false);
+      } else {
+        body.classList.add('light-mode');
+        localStorage.setItem('medq_theme', 'light');
+        updateSettingsThemeUI(true);
+      }
+    }
+
+    /* ===== SAVED CARDS SYSTEM ===== */
+
+    function getSavedCards() {
+      try {
+        return JSON.parse(localStorage.getItem('medq_saved_cards') || '[]');
+      } catch(e) {
+        return [];
+      }
+    }
+
+    function saveSavedCards(arr) {
+      localStorage.setItem('medq_saved_cards', JSON.stringify(arr));
+    }
+
+    function isCardSaved(cardId) {
+      return getSavedCards().includes(cardId);
+    }
+
+    function toggleSaveCard(cardId, itemEl) {
+      const saved = getSavedCards();
+      const idx = saved.indexOf(cardId);
+      const wasSaved = idx !== -1;
+
+      if (wasSaved) {
+        saved.splice(idx, 1);
+      } else {
+        saved.push(cardId);
+      }
+      saveSavedCards(saved);
+      const nowSaved = !wasSaved;
+
+      // Close the context menu first
+      openMenuId = null;
+      const menu = document.getElementById('menu-' + cardId);
+      if (menu) menu.classList.remove('open');
+
+      // Update UI on static DOM cards (in the year views)
+      updateThreeDotBtn(cardId, nowSaved);
+      const staticMenu = document.getElementById('menu-' + cardId);
+      if (staticMenu) {
+        const staticItem = staticMenu.querySelector('.card-context-item');
+        if (staticItem) updateSaveMenuItemUI(cardId, staticItem, nowSaved);
+      }
+
+      // If currently in saved filter view, animate out then rebuild
+      const currentFilter = localStorage.getItem('medq_filter') || 'both';
+      if (currentFilter === 'saved' && wasSaved) {
+        // Find the card in the filter view and animate it out
+        const filterView = document.getElementById('filter-view');
+        const dynCard = filterView.querySelector('[data-card-id="' + cardId + '"]');
+        if (dynCard) {
+          dynCard.classList.add('card-removing');
+          setTimeout(() => {
+            buildFilterView('saved');
+          }, 290); // slightly longer than animation (0.28s)
+        } else {
+          buildFilterView('saved');
+        }
+      }
+    }
+
+    function updateSaveMenuItemUI(cardId, itemEl, nowSaved) {
+      if (!itemEl) return;
+      const svgPath = itemEl.querySelector('path');
+      const span = itemEl.querySelector('span');
+      if (nowSaved) {
+        if (svgPath) {
+          svgPath.classList.remove('save-icon-outline');
+          svgPath.classList.add('save-icon-filled');
+        }
+        if (span) span.textContent = 'Unsave card';
+      } else {
+        if (svgPath) {
+          svgPath.classList.remove('save-icon-filled');
+          svgPath.classList.add('save-icon-outline');
+        }
+        if (span) span.textContent = 'Save card';
+      }
+    }
+
+    function updateThreeDotBtn(cardId, isSaved) {
+      // Update ALL matching cards in the static DOM (there's only one per ID)
+      document.querySelectorAll('[data-card-id="' + cardId + '"]').forEach(card => {
+        const btn = card.querySelector('.card-three-dot-btn');
+        if (btn) {
+          if (isSaved) btn.classList.add('saved');
+          else btn.classList.remove('saved');
+        }
+      });
+    }
+
+    function restoreAllSavedCardUI() {
+      const saved = getSavedCards();
+      saved.forEach(cardId => {
+        updateThreeDotBtn(cardId, true);
+        const menu = document.getElementById('menu-' + cardId);
+        if (menu) {
+          const itemEl = menu.querySelector('.card-context-item');
+          if (itemEl) updateSaveMenuItemUI(cardId, itemEl, true);
+        }
+      });
+    }
+
+    /* ===== CARD THREE-DOT MENU ===== */
+    let openMenuId = null;
+
+    function toggleCardMenu(event, cardId) {
+      event.stopPropagation();
+      const menu = document.getElementById('menu-' + cardId);
+      if (!menu) return;
+
+      if (openMenuId && openMenuId !== cardId) {
+        const prev = document.getElementById('menu-' + openMenuId);
+        if (prev) prev.classList.remove('open');
+      }
+
+      const isOpen = menu.classList.contains('open');
+      if (isOpen) {
+        menu.classList.remove('open');
+        openMenuId = null;
+      } else {
+        // Update the menu item UI to reflect current saved state before opening
+        const isSaved = isCardSaved(cardId);
+        const itemEl = menu.querySelector('.card-context-item');
+        if (itemEl) updateSaveMenuItemUI(cardId, itemEl, isSaved);
+
+        menu.classList.add('open');
+        openMenuId = cardId;
+      }
+    }
+
+    /* ===== FILTER SYSTEM ===== */
+
+    const ALL_SECTIONS = [
+      {
+        type: 'hdsf',
+        yearLabel: '2021-2025',
+        cards: [
+          { id: 'hdsf-2022-anatomy', title: 'Anatomy 🦴', links: [
+            { label: 'Theory', badge: '165 MCQs', href: 'Anatomy.html' },
+            { label: 'Practical', badge: '66 Questions', href: 'Anatomylabs.html' }
+          ]},
+          { id: 'hdsf-2022-microbiology', title: 'Microbiology 🦠', links: [
+            { label: 'Theory', badge: '109 MCQs', href: 'Microbiology.html' },
+            { label: 'Practical', badge: '28 Questions', href: 'Microbiology labs.html' }
+          ]},
+          { id: 'hdsf-2022-molbio', title: 'Molecular biology 🧬', links: [
+            { label: 'Theory', badge: '71 MCQs', href: 'Molecular biology.html' },
+            { label: 'Practical', badge: '3 Questions', href: 'M.biology-practical.html' }
+          ]},
+          { id: 'hdsf-2022-physiology', title: 'Physiology 🫀', links: [
+            { label: 'Theory', badge: '164 MCQs', href: 'Physiology.html' }
+          ]},
+          { id: 'hdsf-2022-genetics', title: 'Genetics 🧬', links: [
+            { label: 'Theory', badge: '61 MCQs', href: 'Genetics.html' }
+          ]},
+          { id: 'hdsf-2022-cellbio', title: 'Cell biology 🔬', links: [
+            { label: 'Theory', badge: '68 MCQs', href: 'Cell biology.html' }
+          ]},
+          { id: 'hdsf-2022-histology', title: 'Histology 🫁', links: [
+            { label: 'Theory', badge: '66 MCQs', href: 'Histology.html' }
+          ]},
+          { id: 'hdsf-2022-embryology', title: 'Embryology 👶', links: [
+            { label: 'Theory', badge: '29 MCQs', href: 'Embryology.html' }
+          ]}
+        ]
+      },
+      {
+        type: 'bbb',
+        yearLabel: '2021-2025',
+        cards: [
+          { id: 'bbb-2022-biochemistry', title: 'Biochemistry 🧪', links: [
+            { label: 'Theory', badge: '434 MCQs', href: 'Biochemistry2.html' },
+            { label: 'Practical', badge: '44 Questions', href: 'Biochemistrylab.html' },
+            { label: 'Quizzes - Theory', badge: '167 MCQs', href: 'QuizBiochemstry.html' }
+          ]},
+          { id: 'bbb-2022-biophysics', title: 'Biophysics ⚛️', links: [
+            { label: 'Theory', badge: '180 MCQs', href: 'Biophysics.html' },
+            { label: 'Practical', badge: '35 Questions', href: 'Biophysicslab.html' }
+          ]},
+          { id: 'bbb-2022-bec', title: 'Basic emergency care ⚕️', links: [
+            { label: 'Theory', badge: '89 MCQs', href: 'BEC.html' },
+            { label: 'Practical', badge: '22 Questions', href: 'BECpractical.html' }
+          ]}
+        ]
+      },
+      {
+        type: 'hdsf',
+        yearLabel: '2025-2026',
+        cards: [
+          { id: 'hdsf-2026-endrot1', title: 'End-Rotation 1 🔥', links: [
+            { label: 'Theory', badge: '20 MCQs', href: 'End-Rotation_HDSF_2025-2026.html' },
+            { label: 'Practical', badge: '10 Questions', href: 'End-Rotation_HDSF-Practical_2025-2026.html' }
+          ]},
+          { id: 'hdsf-2026-endrot2', title: 'End-Rotation 2', links: [
+            { label: 'Theory', badge: '20 MCQs', href: '#' },
+            { label: 'Practical', badge: '10 Questions', href: '#' }
+          ]}
+        ]
+      },
+      {
+        type: 'bbb',
+        yearLabel: '2025-2026',
+        cards: [
+          { id: 'bbb-2026-endrot1', title: 'End-Rotation 1 🔥', links: [
+            { label: 'Theory', badge: '20 MCQs', href: 'End-Rotation_BBB_2025-2026.html' },
+            { label: 'Practical', badge: '10 Questions', href: 'End-rotation_Practical_BBB.html' }
+          ]},
+          { id: 'bbb-2026-endrot2', title: 'End-Rotation 2', links: [
+            { label: 'Theory', badge: '20 MCQs', href: '#' },
+            { label: 'Practical', badge: '10 Questions', href: '#' }
+          ]}
+        ]
+      }
+    ];
+
+    function buildCardEl(card) {
+      const isSaved = isCardSaved(card.id);
+
+      const cardEl = document.createElement('div');
+      cardEl.className = 'subject-card';
+      cardEl.setAttribute('data-card-id', card.id);
+
+      const header = document.createElement('div');
+      header.className = 'card-header';
+
+      const h1 = document.createElement('h1');
+      h1.textContent = card.title;
+      header.appendChild(h1);
+
+      // Three-dot menu wrapper
+      const menuWrapper = document.createElement('div');
+      menuWrapper.className = 'card-menu-wrapper';
+
+      const threeDotBtn = document.createElement('div');
+      threeDotBtn.className = 'card-three-dot-btn' + (isSaved ? ' saved' : '');
+      threeDotBtn.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+      threeDotBtn.onclick = function(e) { toggleCardMenu(e, card.id); };
+
+      const contextMenu = document.createElement('div');
+      contextMenu.className = 'card-context-menu';
+      contextMenu.id = 'menu-' + card.id;
+
+      const contextItem = document.createElement('div');
+      contextItem.className = 'card-context-item';
+
+      const iconSvgNS = 'http://www.w3.org/2000/svg';
+      const iconSvg = document.createElementNS(iconSvgNS, 'svg');
+      iconSvg.setAttribute('viewBox', '0 0 24 24');
+      const iconPath = document.createElementNS(iconSvgNS, 'path');
+      iconPath.setAttribute('d', 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z');
+      if (isSaved) {
+        iconPath.classList.add('save-icon-filled');
+      } else {
+        iconPath.classList.add('save-icon-outline');
+      }
+      iconSvg.appendChild(iconPath);
+
+      const labelSpan = document.createElement('span');
+      labelSpan.textContent = isSaved ? 'Unsave card' : 'Save card';
+
+      contextItem.appendChild(iconSvg);
+      contextItem.appendChild(labelSpan);
+      contextItem.onclick = function() { toggleSaveCard(card.id, contextItem); };
+
+      contextMenu.appendChild(contextItem);
+      menuWrapper.appendChild(threeDotBtn);
+      menuWrapper.appendChild(contextMenu);
+      header.appendChild(menuWrapper);
+      cardEl.appendChild(header);
+
+      const linksContainer = document.createElement('div');
+      linksContainer.className = 'links-container';
+
+      card.links.forEach(link => {
+        const a = document.createElement('span');
+        a.className = 'mcq-link';
+        a.innerHTML = `${link.label} <span class="badge">${link.badge}</span>`;
+        a.onclick = () => location.href = link.href;
+        linksContainer.appendChild(a);
+      });
+
+      cardEl.appendChild(linksContainer);
+      return cardEl;
+    }
+
+    function buildFilterView(filterType) {
+      const container = document.getElementById('filter-view');
+      container.innerHTML = '';
+      openMenuId = null;
+
+      let sections;
+
+      if (filterType === 'saved') {
+        const savedIds = getSavedCards();
+        sections = ALL_SECTIONS.map(section => ({
+          ...section,
+          cards: section.cards.filter(c => savedIds.includes(c.id))
+        })).filter(section => section.cards.length > 0);
+      } else if (filterType === 'both') {
+        sections = ALL_SECTIONS;
+      } else {
+        sections = ALL_SECTIONS.filter(s => s.type === filterType);
+      }
+
+      if (filterType === 'saved' && sections.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'text-align:center; color:var(--text-dim); padding:60px 20px; font-size:0.95rem; font-weight:600;';
+        empty.textContent = 'No saved cards yet. Tap ••• on any card to save it.';
+        container.appendChild(empty);
+        return;
+      }
+
+      sections.forEach(section => {
+        const themeClass = section.type === 'hdsf' ? 'hdsf-theme' : 'bbb-theme';
+        const label = section.type === 'hdsf' ? 'HDSF' : 'BBB';
+
+        const sectionEl = document.createElement('div');
+        sectionEl.className = 'section-container';
+
+        const title = document.createElement('h2');
+        title.className = `category-title ${themeClass}`;
+        title.textContent = `${label} – ${section.yearLabel}`;
+        sectionEl.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'subject-grid';
+
+        section.cards.forEach(card => {
+          grid.appendChild(buildCardEl(card));
+        });
+
+        sectionEl.appendChild(grid);
+        container.appendChild(sectionEl);
+      });
+    }
+
+    function applyFilter(filterType, animate) {
+      const filterView = document.getElementById('filter-view');
+      const yearContents = document.querySelectorAll('.year-content');
+
+      if (filterType === 'both') {
+        filterView.classList.remove('active');
+        filterView.innerHTML = '';
+
+        const savedYear = localStorage.getItem('userSelectedYear') || '2022';
+        yearContents.forEach(c => c.classList.remove('active'));
+        const activeContent = document.getElementById('content-' + savedYear);
+        if (activeContent) activeContent.classList.add('active');
+      } else {
+        yearContents.forEach(c => c.classList.remove('active'));
+        buildFilterView(filterType);
+        filterView.classList.add('active');
+      }
+    }
+
+    function setFilter(filterType) {
+      localStorage.setItem('medq_filter', filterType);
+
+      document.querySelectorAll('.filter-option').forEach(el => el.classList.remove('active'));
+      document.getElementById('filter-' + filterType).classList.add('active');
+
+      document.getElementById('filter-dropdown').classList.remove('open');
+      document.getElementById('filter-btn').classList.remove('dropdown-open');
+
+      applyFilter(filterType, true);
+    }
+
+    function toggleFilterDropdown() {
+      const dropdown = document.getElementById('filter-dropdown');
+      const btn = document.getElementById('filter-btn');
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        dropdown.classList.remove('open');
+        btn.classList.remove('dropdown-open');
+      } else {
+        document.getElementById('year-dropdown').classList.remove('open');
+        document.getElementById('calendar-btn').classList.remove('dropdown-open');
+        document.getElementById('settings-dropdown').classList.remove('open');
+        document.getElementById('settings-btn').classList.remove('dropdown-open');
+        dropdown.classList.add('open');
+        btn.classList.add('dropdown-open');
+      }
+    }
+
+    /* ===== GLOBAL CLICK OUTSIDE ===== */
+    document.addEventListener('click', function(e) {
+      // Close card context menus
+      if (openMenuId) {
+        const openMenu = document.getElementById('menu-' + openMenuId);
+        const wrapper = openMenu ? openMenu.closest('.card-menu-wrapper') : null;
+        if (!wrapper || !wrapper.contains(e.target)) {
+          if (openMenu) openMenu.classList.remove('open');
+          openMenuId = null;
+        }
+      }
+
+      const yearWrapper = document.querySelector('.year-dropdown-wrapper');
+      if (yearWrapper && !yearWrapper.contains(e.target)) {
+        document.getElementById('year-dropdown').classList.remove('open');
+        document.getElementById('calendar-btn').classList.remove('dropdown-open');
+      }
+
+      const settingsWrapper = document.querySelector('.settings-dropdown-wrapper');
+      if (settingsWrapper && !settingsWrapper.contains(e.target)) {
+        closeSettingsDropdown();
+      }
+
+      const filterWrapper = document.querySelector('.filter-dropdown-wrapper');
+      if (filterWrapper && !filterWrapper.contains(e.target)) {
+        document.getElementById('filter-dropdown').classList.remove('open');
+        document.getElementById('filter-btn').classList.remove('dropdown-open');
+      }
+    });
+
+    /* ===== INIT ===== */
     window.onload = function() {
-      // Remove pre-render helper class
       document.documentElement.classList.remove('light-mode-pre');
 
       // Restore year
       const savedYear = localStorage.getItem('userSelectedYear');
       if (savedYear) {
-        const chip = document.getElementById('chip-' + savedYear);
-        if (chip) showYear(savedYear, chip);
+        const item = document.getElementById('item-' + savedYear);
+        if (item) {
+          document.querySelectorAll('.year-content').forEach(c => c.classList.remove('active'));
+          document.getElementById('content-' + savedYear).classList.add('active');
+          document.querySelectorAll('.year-dropdown-item').forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+        }
       }
 
       // Restore theme
-      if (localStorage.getItem('medq_theme') === 'light') {
+      const savedTheme = localStorage.getItem('medq_theme');
+      if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
-        document.getElementById('icon-moon').style.display = 'none';
-        document.getElementById('icon-sun').style.display = '';
-        document.getElementById('theme-toggle').classList.replace('dark-active', 'light-active');
+        updateSettingsThemeUI(true);
+      } else {
+        updateSettingsThemeUI(false);
       }
 
-      // Restore section swap (no animation on load)
-      applySwapState(localStorage.getItem('medq_section_swap') === 'true', false);
+      // Restore swap
+      const savedSwap = localStorage.getItem('medq_section_swap') === 'true';
+      applySwapState(savedSwap, false);
+
+      // Restore profile
+      restoreProfile();
+
+      // Restore saved card UI on static cards
+      restoreAllSavedCardUI();
+
+      // Restore filter
+      const savedFilter = localStorage.getItem('medq_filter') || 'both';
+      if (savedFilter !== 'both') {
+        const optionEl = document.getElementById('filter-' + savedFilter);
+        if (optionEl) {
+          document.querySelectorAll('.filter-option').forEach(el => el.classList.remove('active'));
+          optionEl.classList.add('active');
+        }
+        applyFilter(savedFilter, false);
+      }
     };
   </script>
 
@@ -714,11 +2459,11 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    const db = getFirestore(app);
 
     const overlay = document.getElementById('activation-overlay');
-    const btn     = document.getElementById('activate-btn');
-    const status  = document.getElementById('status-msg');
+    const btn = document.getElementById('activate-btn');
+    const status = document.getElementById('status-msg');
 
     if (localStorage.getItem('medq_active') === 'true') {
       overlay.style.display = 'none';
@@ -733,7 +2478,7 @@
       status.style.color = "#38bdf8";
 
       try {
-        const docRef  = doc(db, "activationCodes", code);
+        const docRef = doc(db, "activationCodes", code);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists() && docSnap.data().isUsed === false) {
